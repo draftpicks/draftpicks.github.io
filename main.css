@@ -1,0 +1,45 @@
+html {
+  font-family: 'Roboto', Helvetica, Arial, sans-serif;
+  font-size: 100%;
+  background: #efefef;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+}
+
+#page-wrapper {
+  max-width: 900px;
+  background: #FFF;
+  padding: 1em;
+  margin: 0 auto;
+  min-height: 300px;
+  border-top: 5px solid #7A1F0A;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+}
+
+h1 {
+	margin-top: 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+#results {
+  width: 100%;
+}
+
+#share {
+  display: none;
+}
+
+.margin {
+  margin: 15px 0;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+  border: 1px solid #ccc;
+  background: #eee;
+}
