@@ -29,16 +29,6 @@
     });
   }
 
-  $('#share').on('click', function() {
-    if (!datasetChanged) {
-      return;
-    }
-
-    saveDataset(dataset).then(function(data) {
-      setShareLink(data.id);
-    });
-  });
-
   fileInput.addEventListener('change', function(e) {
     var files = fileInput.files;
 
@@ -59,9 +49,11 @@
 
         if (i === total - 1) {
           datasetChanged = true;
-          $('#share-link').hide();
           dataset = createDataset(cards);
           createTable(dataset);
+          saveDataset(dataset).then(function(data) {
+            setShareLink(data.id);
+          });
         }
       }
 
