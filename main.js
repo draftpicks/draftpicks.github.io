@@ -1,10 +1,12 @@
 (function() {
   var fileInput = document.getElementById('fileInput');
   var fileDisplayArea = document.getElementById('fileDisplayArea');
+  var $preview = $('#card-preview');
 
   var cards = {},
       total = 0,
       datasetChanged = false,
+      exampleId = 'eoLZXokxwy',
       dataset;
 
   var regex = {
@@ -20,25 +22,46 @@
     selectedReplace: /-->\s/g
   };
 
-  Parse.initialize("FM7yovFGN8hA03tobbBmAhURObre3VhKn0QFQTGG", "vE9OJoPg89IfILen7AtZOwmw3PBsIeF7ucS8sk5n");
+  init();
 
-  if (getParameterByName('id')) {
-    getDataset(getParameterByName('id')).then(function(resp) {
+  function init() {
+    Parse.initialize("FM7yovFGN8hA03tobbBmAhURObre3VhKn0QFQTGG", "vE9OJoPg89IfILen7AtZOwmw3PBsIeF7ucS8sk5n");
+
+    if (getParameterByName('id')) {
+      preloadTable(getParameterByName('id'));
+    }
+
+    fileInput.addEventListener('change', function(e) {
+      var files = fileInput.files;
+
+      cards = {};
+      total = files.length;
+
+      for (var i = 0; i < total; i++) {
+        readFile(files[i], i);
+      }
+    });
+
+    $('.example').on('click', function(e) {
+      e.preventDefault();
+      preloadTable(exampleId);
+    });
+
+    $('#results').on('mouseover', '.card a', function() {
+      var $card = $(this).parent(),
+          card = $(this).text();
+      $preview.show().find('img').attr('src', getImageLink(card));
+    }).on('mouseout', '.card a', function() {
+      $preview.hide();
+    });
+  }
+
+  function preloadTable(id) {
+    getDataset(id).then(function(resp) {
       setShareLink(resp.id);
       createTable(resp.attributes.data);
     });
   }
-
-  fileInput.addEventListener('change', function(e) {
-    var files = fileInput.files;
-
-    cards = {};
-    total = files.length;
-
-    for (var i = 0; i < total; i++) {
-      readFile(files[i], i);
-    }
-  });
 
   function readFile(file, i) {
     if (file.type.match(regex.text)) {
@@ -161,8 +184,21 @@
         { title: 'Pick %', width: '15%', type: 'num'},
         { title: 'Avg Pick', width: '15%', type: 'num'}
       ],
-      order: [[4, 'asc']]
+      order: [[4, 'asc']],
+      columnDefs: [
+        { 
+          targets: 0,
+          render: function(data) {
+            return '<a target="_blank" href="' + getImageLink(data) + '">' + data + '</a>';
+          },
+          className: 'card'
+        }
+      ]
     });
+  }
+
+  function getImageLink(card) {
+    return 'http://gatherer.wizards.com/Handlers/Image.ashx?type=card&name=' + card;
   }
 
   function saveDataset(dataset) {

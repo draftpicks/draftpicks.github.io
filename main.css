@@ -7,6 +7,7 @@ html {
 body {
   padding: 0;
   margin: 0;
+  position: relative;
 }
 
 #page-wrapper {
@@ -27,6 +28,10 @@ img {
   max-width: 100%;
 }
 
+a {
+  text-decoration: none;
+}
+
 #results {
   width: 100%;
 }
@@ -35,8 +40,22 @@ img {
   display: none;
 }
 
+#card-preview {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin-top: -155px;
+  margin-left: -110px;
+  width: 220px;
+  height: 310px;
+}
+
 .margin {
   margin: 15px 0;
+}
+
+.card {
+  position: relative;
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
