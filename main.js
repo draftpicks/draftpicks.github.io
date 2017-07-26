@@ -6,7 +6,7 @@
   var cards = {},
       total = 0,
       datasetChanged = false,
-      exampleId = 'eoLZXokxwy',
+      exampleId = '-Kq01fVtpFqyVa96MVPu',
       dataset;
 
   var regex = {
@@ -22,10 +22,18 @@
     selectedReplace: /-->\s/g
   };
 
+  var config = {
+    apiKey: 'AIzaSyBRV6orJfo6Nf5uXEOuojNA1shoCtglrUE',
+    authDomain: 'draftsignals.firebaseapp.com',
+    databaseURL: 'https://draftsignals.firebaseio.com'
+  };
+
+  var dbRef = 'picks/';
+
   init();
 
   function init() {
-    Parse.initialize("FM7yovFGN8hA03tobbBmAhURObre3VhKn0QFQTGG", "vE9OJoPg89IfILen7AtZOwmw3PBsIeF7ucS8sk5n");
+    firebase.initializeApp(config);
 
     if (getParameterByName('id')) {
       preloadTable(getParameterByName('id'));
@@ -58,8 +66,8 @@
 
   function preloadTable(id) {
     getDataset(id).then(function(resp) {
-      setShareLink(resp.id);
-      createTable(resp.attributes.data);
+      setShareLink(id);
+      createTable(resp.dataset);
     });
   }
 
@@ -74,9 +82,8 @@
           datasetChanged = true;
           dataset = createDataset(cards);
           createTable(dataset);
-          saveDataset(dataset).then(function(data) {
-            setShareLink(data.id);
-          });
+          var id = saveDataset(dataset);
+          setShareLink(id);
         }
       }
 
@@ -202,19 +209,18 @@
   }
 
   function saveDataset(dataset) {
-    var Cards = Parse.Object.extend("Cards");
-    var cardObj = new Cards();
+    var req = firebase.database().ref(dbRef).push({ dataset: dataset }),
+        id = req.key;
 
-    cardObj.set('data', dataset);
-
-    return cardObj.save();
+    return id;
   }
 
   function getDataset(id) {
-    var Cards = Parse.Object.extend("Cards");
-    var query = new Parse.Query(Cards);
-
-    return query.get(id);
+    return firebase.database().ref(dbRef + id).once('value')
+      .then(function(snapshot) {
+        var data = snapshot.val();
+        return data;
+      });
   }
 
   function getParameterByName(name) {
